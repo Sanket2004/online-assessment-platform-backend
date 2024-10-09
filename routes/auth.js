@@ -7,14 +7,19 @@ const router = express.Router();
 // Register a new user
 router.post("/register", async (req, res) => {
   const { email, password, name, phone } = req.body;
-  console.log(req.body);
 
-
-  if (!name || !email || !password) {
+  // Check for required fields
+  if (!name || !email || !password || !phone) {
     return res.status(400).json({ error: "All fields are required" });
   }
 
   try {
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email is already in use" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = new User({ email, password: hashedPassword, name, phone });
     await newUser.save();
@@ -23,6 +28,7 @@ router.post("/register", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
 
 // User login
 router.post("/login", async (req, res) => {
