@@ -4,6 +4,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const authRoutes = require('./routes/auth');
 const testRoutes = require('./routes/test');
+const certificateRoutes = require('./routes/certificate');
 require('dotenv').config();
 
 const app = express();
@@ -19,6 +20,9 @@ app.use('/api/auth', authRoutes);
 
 // Test routes
 app.use('/api/tests', testRoutes);
+
+//Certificate Route
+app.use('/api', certificateRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
