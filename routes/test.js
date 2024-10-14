@@ -118,18 +118,19 @@ router.get("/attempts/:userId", async (req, res) => {
     const attempts = await TestAttempt.find({ userId })
       .populate({
         path: "testId",
-        select: "title questions", // Make sure to include questions
+        select: "title questions", // Include title and questions from the test
       })
       .exec();
 
     if (attempts.length === 0) {
-      return res
-        .status(404)
-        .json({ message: "No attempts found for this user." });
+      // No need to return 404, just return an empty array
+      return res.json({ message: "No attempts found for this user.", attempts: [] });
     }
 
-    res.json(attempts);
+    // Return the found attempts
+    res.json({ attempts });
   } catch (error) {
+    // Return 500 if there's an actual error
     res
       .status(500)
       .json({ message: "Error retrieving attempts", error: error.message });
